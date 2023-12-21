@@ -11,6 +11,9 @@ data class Movie (
     @NonNull
     val id: Int = 0,
 
+    @ColumnInfo(name = "movie_id")
+    val movieId: String,
+
     @ColumnInfo(name = "title")
     val title: String,
 

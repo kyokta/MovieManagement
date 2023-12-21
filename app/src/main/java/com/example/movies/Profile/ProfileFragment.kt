@@ -7,21 +7,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.movies.Admin.MainAdmin
 import com.example.movies.Database.Firebase.Users
-import com.example.movies.Database.User.UserDao
-import com.example.movies.Database.User.UserRoomDatabase
-import com.example.movies.LoginRegister.LoginFragment
 import com.example.movies.LoginRegister.LoginRegister
-import com.example.movies.MainActivity
-import com.example.movies.R
 import com.example.movies.databinding.FragmentProfileBinding
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -31,10 +21,6 @@ class ProfileFragment : Fragment() {
 //    firebase
     private var firestore = FirebaseFirestore.getInstance()
     private var userCollection = firestore.collection("users")
-
-//    dao
-    private lateinit var mUserDao: UserDao
-    private lateinit var executorService: ExecutorService
 
     private var param1: String? = null
     private var param2: String? = null
@@ -51,10 +37,6 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        executorService = Executors.newSingleThreadExecutor()
-        val db = UserRoomDatabase.getDatabase(requireContext())
-        mUserDao = db!!.userDao()!!
-
         binding = FragmentProfileBinding.inflate(inflater, container, false)
         var view = binding.root
 

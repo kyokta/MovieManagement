@@ -1,7 +1,6 @@
 package com.example.movies.Database.Firebase
 
 import androidx.room.PrimaryKey
-import java.net.URI
 
 data class Movies(
     @PrimaryKey

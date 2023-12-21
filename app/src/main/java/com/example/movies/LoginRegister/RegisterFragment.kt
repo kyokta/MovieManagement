@@ -15,17 +15,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat.getSystemService
 import com.example.movies.Database.Firebase.Users
-import com.example.movies.Database.User.User
-import com.example.movies.Database.User.UserDao
-import com.example.movies.Database.User.UserRoomDatabase
 import com.example.movies.R
 import com.example.movies.databinding.FragmentRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -36,14 +30,10 @@ class RegisterFragment : Fragment() {
     private var auth = FirebaseAuth.getInstance()
     private var firestore = FirebaseFirestore.getInstance()
     private var userCollection = firestore.collection("users")
-//    dao
-    private lateinit var mUserDao: UserDao
-    private lateinit var executorService: ExecutorService
 
     private val channelId = "MOVIE_NOTIFICATION"
     private val notifId = 90
 
-    private var id: Int = 0
     private var param1: String? = null
     private var param2: String? = null
 
@@ -59,10 +49,6 @@ class RegisterFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        executorService = Executors.newSingleThreadExecutor()
-        val db = UserRoomDatabase.getDatabase(requireContext())
-        mUserDao = db!!.userDao()!!
-
         binding = FragmentRegisterBinding.inflate(inflater, container, false)
         var view = binding.root
 
@@ -119,10 +105,6 @@ class RegisterFragment : Fragment() {
         }
 
         return view
-    }
-
-    private fun insert(user: User) {
-        executorService.execute { mUserDao.insert(user) }
     }
 
     private fun register(user: Users) {

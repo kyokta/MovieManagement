@@ -2,7 +2,6 @@ package com.example.movies
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.movies.Home.HomeFragment
 import com.example.movies.Pesanan.PesananFragment

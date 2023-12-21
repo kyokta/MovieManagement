@@ -4,7 +4,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -36,7 +35,7 @@ class DetailsAdmin : AppCompatActivity() {
     private val notifId = 90
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        executorService = Executors.newSingleThreadScheduledExecutor()
+        executorService = Executors.newSingleThreadExecutor()
         val db = MovieRoomDatabase.getDatabase(this)
         mMovieDao = db!!.movieDao()!!
 
@@ -125,6 +124,8 @@ class DetailsAdmin : AppCompatActivity() {
                         }
                     }
 
+                    deleteDao(movieId)
+
                     MoviesCollectionRef.document(movieId).delete()
                         .addOnSuccessListener {
                             val notifManager = getSystemService(Context.NOTIFICATION_SERVICE) as
@@ -147,4 +148,7 @@ class DetailsAdmin : AppCompatActivity() {
         }
     }
 
+    private fun deleteDao(movieId: String) {
+        executorService.execute { mMovieDao.deleteMovieById(movieId) }
+    }
 }

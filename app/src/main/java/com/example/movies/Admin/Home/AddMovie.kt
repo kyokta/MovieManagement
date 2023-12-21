@@ -12,6 +12,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.bumptech.glide.Glide
 import com.example.movies.Database.Firebase.Movies
+import com.example.movies.Database.Movie.Movie
 import com.example.movies.Database.Movie.MovieDao
 import com.example.movies.Database.Movie.MovieRoomDatabase
 import com.example.movies.databinding.ActivityAddMovieBinding
@@ -194,6 +195,17 @@ class AddMovie : AppCompatActivity() {
                                 val movieId = docRef.id
                                 movie.id = movieId
                                 docRef.set(movie)
+                                    .addOnSuccessListener {
+                                        val newMovie = Movie(
+                                            movieId = movieId,
+                                            title = movie.title,
+                                            image = "image",
+                                            description = movie.description,
+                                            place = movie.place,
+                                            date = movie.date
+                                        )
+                                        addToDao(newMovie)
+                                    }
                                     .addOnFailureListener {
                                         Log.e("AddMovie", "Error adding data")
                                     }
@@ -217,5 +229,9 @@ class AddMovie : AppCompatActivity() {
                         }
                 }
         }
+    }
+
+    private fun addToDao(movie: Movie){
+        executorService.execute { mMovieDao.insert(movie) }
     }
 }

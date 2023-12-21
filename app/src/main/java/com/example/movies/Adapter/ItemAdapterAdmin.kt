@@ -2,7 +2,6 @@ package com.example.movies.Adapter
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import com.bumptech.glide.Glide
 import com.example.movies.Admin.Home.AddMovie
 import com.example.movies.Admin.Home.DetailsAdmin
 import com.example.movies.Database.Firebase.Movies
-import com.example.movies.Database.Movie.Movie
 import com.example.movies.R
 
 class ItemAdapterAdmin (
