@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.movies.Database.Firebase.Movies
 import com.example.movies.Database.Movie.Movie
@@ -33,6 +34,7 @@ class AddMovie : AppCompatActivity() {
     private lateinit var mMovieDao: MovieDao
     private lateinit var executorService: ExecutorService
     private var updatedId: String = ""
+    private var oldImage: String = ""
 
     private val PICK_IMAGE_REQUEST = 1
     private lateinit var selectedImageUri: Uri
@@ -54,7 +56,6 @@ class AddMovie : AppCompatActivity() {
             if (movieId != null) {
                 titlePage.text = "EDIT MOVIE"
                 btnTambah.text = "Simpan"
-                updateImage.visibility = View.GONE
                 showData(movieId)
 
                 btnTambah.setOnClickListener {
@@ -65,8 +66,6 @@ class AddMovie : AppCompatActivity() {
                         date = tanggalFilm.text.toString()
                     )
                     updateData(updatedMov)
-                    updatedId = ""
-                    finish()
                 }
             } else {
                 titlePage.text = "TAMBAH MOVIE"
@@ -156,21 +155,84 @@ class AddMovie : AppCompatActivity() {
                             binding.deskirpsiFilm.setText(it.description)
                             val placeIndex = getPlaceIndex(it.place)
                             binding.tempatFilm.setSelection(placeIndex)
-                            selectedImageUri = Uri.parse(it.image)
-                            Glide.with(this)
-                                .load(it.image)
-                                .into(binding.prevImage)
+                            if (it.image.isNotEmpty()) {
+                                selectedImageUri = Uri.parse(it.image)
+                                Glide.with(this)
+                                    .load(it.image)
+                                    .into(binding.prevImage)
+                                oldImage = it.image
+                            }
                         }
                     }
                 }
             }
     }
 
+    private fun getImageUri(callback: (String) -> Unit) {
+        if (::selectedImageUri.isInitialized) {
+            val imageRef = storageRef.child("images/${System.currentTimeMillis()}.jpg")
+
+            imageRef.putFile(selectedImageUri)
+                .addOnSuccessListener { taskSnapshot ->
+                    imageRef.downloadUrl.addOnSuccessListener { uri ->
+                        val imageUrl = uri.toString()
+                        callback(imageUrl)
+                    }
+                }
+                .addOnFailureListener {
+                    Log.e("AddMovie", "Error uploading image", it)
+                    callback("")
+                }
+        } else {
+            callback("")
+        }
+    }
+
+
     private fun updateData(movie: Movies) {
-        movie.id = updatedId
-        MoviesCollectionRef.document(updatedId).set(movie)
+        getImageUri { image ->
+            if (image.isNotEmpty()) {
+                movie.id = updatedId
+                movie.image = image
+
+                MoviesCollectionRef.document(updatedId).set(movie)
+                    .addOnSuccessListener {
+                        if(oldImage.isNotEmpty()) {
+                            delOldImage(oldImage)
+                        }
+                        updatedId = ""
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        Log.e("UpdateMovie", "Error updating movie", it)
+                    }
+            } else {
+                movie.id = updatedId
+
+                MoviesCollectionRef.document(updatedId).set(movie)
+                    .addOnSuccessListener {
+                        if(oldImage.isNotEmpty()) {
+                            delOldImage(oldImage)
+                        }
+                        updatedId = ""
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        Log.e("UpdateMovie", "Error updating movie", it)
+                    }
+            }
+        }
+    }
+
+    private fun delOldImage(link: String) {
+        val oldImageRef = FirebaseStorage.getInstance().getReferenceFromUrl(link)
+
+        oldImageRef.delete()
+            .addOnSuccessListener {
+                Log.d("DeleteImage", "Old image deleted successfully")
+            }
             .addOnFailureListener {
-                Log.e("UpdateMovie", "Error updating movie", it)
+                Log.e("DeleteImage", "Error deleting old image", it)
             }
     }
 
