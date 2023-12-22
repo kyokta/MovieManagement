@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.movies.Database.Movie.Movie
 import com.example.movies.Offline.OfflineDetail
 import com.example.movies.R
@@ -34,6 +35,9 @@ class ItemAdapterOffline (
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = data[position]
 
+        Glide.with(context)
+            .load(item.image)
+            .into(holder.image)
         holder.title.text = item.title
         holder.date.text = item.date
         holder.place.text = item.place

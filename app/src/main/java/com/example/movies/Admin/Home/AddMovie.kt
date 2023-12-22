@@ -261,7 +261,7 @@ class AddMovie : AppCompatActivity() {
                                         val newMovie = Movie(
                                             movieId = movieId,
                                             title = movie.title,
-                                            image = "image",
+                                            image = imageUrl,
                                             description = movie.description,
                                             place = movie.place,
                                             date = movie.date

@@ -3,6 +3,7 @@ package com.example.movies.Offline
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.example.movies.Database.Movie.MovieDao
 import com.example.movies.Database.Movie.MovieRoomDatabase
 import com.example.movies.databinding.ActivityOfflineDetailBinding
@@ -47,6 +48,11 @@ class OfflineDetail : AppCompatActivity() {
             binding.placeMovies.text = movie?.place
             binding.dateMovies.text = movie?.date
             binding.descriptionMovie.text = movie?.description
+            if (!movie?.image.isNullOrEmpty()) {
+                Glide.with(this)
+                    .load(movie?.image)
+                    .into(binding.imageMovies)
+            }
         }
     }
 }
